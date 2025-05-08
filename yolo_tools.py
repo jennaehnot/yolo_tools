@@ -96,15 +96,73 @@ class Img:
         return
 
 class Dataset():
-    def __init__(self):
-        self.num_imgs = 0
-        self.class_instances = None
-        self.img_sizes = []
-        self.img_ratios = []
-        self.img_areas = []
-        self.bb_area = None
+    def __init__(self, yaml):
+    #     self.num_imgs = 0
+    #     self.class_instances = None
+    #     self.img_sizes = []
+    #     self.img_ratios = []
+    #     self.img_areas = []
+    #     self.bb_area = None
+
+    # def read_yaml(self, yaml):                
+        self.dset_path = None
+        self.train_path = None
+        self.val_path = None
+        self.test_path = None
+        self.nc = None
+        
+        try:
+            with open(yaml, 'r') as file:
+
+                start_count = False
+                nc = 0
+                for line in file:
+                    
+                    
+                    if line.startswith('path'):
+                        d_path = line.replace('path: ','')
+                        # check for comments
+                        if '#' in d_path:
+                            i = d_path.index('#')
+                            d_path = d_path[:i]
+                        self.dset_path = d_path.strip()
+
+                    if line.startswith('train'):
+                        tr_path = line.replace('train: ','')
+                        if '#' in tr_path:
+                            ii = tr_path.index('#')
+                            tr_path = tr_path[:ii]
+                        self.train_path = tr_path.strip()
+                    
+                    if line.startswith('val'):
+                        v_path = line.replace('val:','')
+                        if '#' in v_path:
+                            j = v_path.index('#')
+                            v_path = v_path[:j]
+                        self.val_path = v_path.strip()
+
+                    if line.startswith('test'):
+                        tst_path = line.replace('test:','')
+                        if '#' in tst_path:
+                            jj = tst_path.index('#')
+                            tst_path = tst_path[:jj]
+                        self.test_path = tst_path.strip()
+                    # for counting number of classes
+                    if start_count == True and ':' in line: # second condition avoids counting empty lines 
+                        nc +=1
+                    # begin counting classes
+                    if line.startswith('names'):
+                        start_count = True
+
+            self.nc = nc
+
+        except Exception as e:
+            print('There was an error reading you .yaml file')
+            print(e)
+            
 
 
+'''
     
 def eval_dataset(imgs, num_class):
     # instances of all classes in total
@@ -222,3 +280,4 @@ def image_sizes(dataset):
     print(big5)
 
     return
+    '''
